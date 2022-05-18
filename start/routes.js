@@ -57,7 +57,8 @@ Route.group(() => {
 
 //LogIn LogOut and Register
 Route.group(() => {
-  Route.get('/login', 'LoginController.store')
-  Route.post('/logout', 'LoginController.destroy')
+  Route.post('/login', 'LoginController.store')
+  Route.get('/login', 'LoginController.index')
+  Route.get('/logout', 'LoginController.destroy')
   Route.post('/register', 'RegisterController.store')
 }).middleware(['guest'])
