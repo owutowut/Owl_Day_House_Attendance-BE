@@ -3,19 +3,25 @@
 const Leave = use('App/Models/Leave')
 
 class LeaveController {
-  async index ({ response }) {
-    const leave= await Leave.all()
+  async index ({ request, response }) {
+    const {page} = request.all()
 
-    response.status(200).json({
-      message: 'All Leave.',
-      data: leave
-    })
+    try {
+      const leaves = await Leave.query().paginate(page, 5)
+
+      response.status(200).json({
+        message: 'All Leave.',
+        data: leaves
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async store ({ request, response }) {
-    const { name, leave_type, from, to, no_of_days, tag, status } = request.post()
+    const data = request.all()
 
-    const leave = await Leave.create({ name, leave_type, from, to, no_of_days, tag, status })
+    const leave = await Leave.create(data)
 
     response.status(200).json({
       message: 'Successfully created.',
@@ -33,8 +39,8 @@ class LeaveController {
   }
 
   async update({ request, response, params: { id } }) {
-    const leave = await Leave.findOrFail(id)
     const { name, leave_type, from, to, no_of_days, tag, status } = request.post()
+    const leave = await Leave.findOrFail(id)
 
     leave.name = name
     leave.leave_type = leave_type
@@ -44,7 +50,7 @@ class LeaveController {
     leave.tag = tag
     leave.status = status
 
-    await leave.save()
+    leave.save(id)
 
     response.status(200).json({
       message: 'Successfully updated.',
@@ -55,7 +61,7 @@ class LeaveController {
   async destroy ({ response, params: { id } }) {
     const leave = await Leave.findOrFail(id)
 
-    await leave.delete()
+    leave.delete(leave)
 
     response.status(200).json({
       message: 'Successfully deleted.',

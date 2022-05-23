@@ -3,61 +3,83 @@
 const Holiday = use('App/Models/Holiday')
 
 class HolidayController {
-  async index ({ response }) {
-    const holiday= await Holiday.all()
+  async index ({ request, response }) {
+    const {page} = request.all()
 
-    response.status(200).json({
-      message: 'All Holiday.',
-      data: holiday
-    })
+    try {
+      const holiday = await Holiday.query().paginate(page, 5)
+
+      response.status(200).json({
+        message: 'All Holiday.',
+        data: holiday
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async store ({ request, response }) {
     const { name, from, to, no_of_days } = request.post()
 
-    const holiday = await Holiday.create({ name, from, to, no_of_days })
+    try {
+      const holiday = await Holiday.create({ name, from, to, no_of_days })
 
-    response.status(200).json({
-      message: 'Successfully created.',
-      data:holiday
-    })
+      response.status(200).json({
+        message: 'Successfully created.',
+        data: holiday
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async show({ response, params: { id } }) {
-    const holiday = await Holiday.findOrFail(id)
+    try {
+      const holiday = await Holiday.findOrFail(id)
 
-    response.status(200).json({
-      message: 'Holiday ID : ' + id,
-      data: holiday
-    })
+      response.status(200).json({
+        message: 'Holiday ID : ' + id,
+        data: holiday
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async update({ request, response, params: { id } }) {
-    const holiday = await Holiday.findOrFail(id)
     const { name, from, to, no_of_days } = request.post()
 
-    holiday.name = name
-    holiday.from = from
-    holiday.to = to
-    holiday.no_of_days = no_of_days
+    try {
+      const holiday = await Holiday.findOrFail(id)
 
-    await holiday.save()
+      holiday.name = name
+      holiday.from = from
+      holiday.to = to
+      holiday.no_of_days = no_of_days
 
-    response.status(200).json({
-      message: 'Successfully updated.',
-      data: holiday
-    })
+      holiday.save(id)
+
+      response.status(200).json({
+        message: 'Successfully updated.',
+        data: holiday
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async destroy ({ response, params: { id } }) {
-    const holiday = await Holiday.findOrFail(id)
+    try {
+      const holiday = await Holiday.findOrFail(id)
+      holiday.delete(id)
 
-    await holiday.delete()
-
-    response.status(200).json({
-      message: 'Successfully deleted.',
-      data: holiday
-    })
+      response.status(200).json({
+        message: 'Successfully deleted.',
+        data: holiday
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 }
 

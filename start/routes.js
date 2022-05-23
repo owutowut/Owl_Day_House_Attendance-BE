@@ -16,10 +16,6 @@
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
 
-Route.get('/', () => {
-  return { greeting: 'Hello world in JSON' }
-})
-
 //Leaves
 Route.group(() => {
   Route.get('/leaves', 'LeaveController.index')
@@ -27,7 +23,7 @@ Route.group(() => {
   Route.post('/leaves/create', 'LeaveController.store')
   Route.patch('/leaves/update/:id', 'LeaveController.update').middleware(['findLeave'])
   Route.delete('/leaves/delete/:id', 'LeaveController.destroy').middleware(['findLeave'])
-}).middleware(['auth'])
+})
 
 //WorkFromHome
 Route.group(() => {
@@ -36,7 +32,7 @@ Route.group(() => {
   Route.post('/work_from_home/create', 'WorkFromHomeController.store')
   Route.patch('/work_from_home/update/:id', 'WorkFromHomeController.update').middleware(['findWorkFromHome'])
   Route.delete('/work_from_home/delete/:id', 'WorkFromHomeController.destroy').middleware(['findWorkFromHome'])
-}).middleware(['auth'])
+})
 
 //Holiday
 Route.group(() => {
@@ -45,7 +41,7 @@ Route.group(() => {
   Route.post('/holiday/create', 'HolidayController.store')
   Route.patch('/holiday/update/:id', 'HolidayController.update').middleware(['findHoliday'])
   Route.delete('/holiday/delete/:id', 'HolidayController.destroy').middleware(['findHoliday'])
-}).middleware(['auth'])
+})
 
 //Users
 Route.group(() => {
@@ -53,12 +49,11 @@ Route.group(() => {
   Route.get('/users/:id', 'UserController.show').middleware(['findUser'])
   Route.patch('/users/update/:id', 'UserController.update').middleware(['findUser'])
   Route.delete('/users/delete/:id', 'UserController.destroy').middleware(['findUser'])
-}).middleware(['auth'])
+})
 
 //LogIn LogOut and Register
 Route.group(() => {
   Route.post('/login', 'LoginController.store')
-  Route.get('/login', 'LoginController.index')
   Route.get('/logout', 'LoginController.destroy')
   Route.post('/register', 'RegisterController.store')
 }).middleware(['guest'])
