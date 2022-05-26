@@ -4,14 +4,52 @@ const Leave = use('App/Models/Leave')
 
 class LeaveController {
   async index ({ request, response }) {
-    const {page} = request.all()
+    const {page, search, selected} = request.all()
+    //get current month
+    const today = new Date();
+    const current_month = today.getMonth()+1;
+
+    //get sick leaves total
+    const sick_leaves = await Leave.query().where('leave_type', 'ลาป่วย').count()
+    const sick_leaves_total = sick_leaves[0]['count(*)']
+    //get business leaves total
+    const business_leaves = await Leave.query().where('leave_type', 'ลากิจ').count()
+    const business_leaves_total = business_leaves[0]['count(*)']
+    //get all leaves total
+    const all_leaves = await Leave.query().count()
+    const all_leaves_total = all_leaves[0]['count(*)']
+    //get all leaves total of current month
+    const all_leaves_month = await Leave.query().where('from', 'LIKE', `%${current_month}%`).count()
+    const all_leaves_month_total = all_leaves_month[0]['count(*)']
 
     try {
+      if ( search ) {
+        const leaves = await Leave.query()
+          .where('name', 'LIKE', `%${search}%`)
+          .paginate(page, 5)
+
+        return response.status(200).json({
+          message: 'Leaves by search',
+          data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
+        })
+      }
+
+      if ( selected !== 'all' ) {
+        const leaves = await  Leave.query()
+          .where('leave_type', 'LIKE', `%${selected}%`)
+          .paginate(page, 5)
+
+        return response.status(200).json({
+          message: 'Leaves by selected',
+          data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
+        })
+      }
+
       const leaves = await Leave.query().paginate(page, 5)
 
       response.status(200).json({
-        message: 'All Leave.',
-        data: leaves
+        message: 'Leaves All',
+        data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
       })
     } catch (error) {
       response.send(error)
@@ -29,7 +67,8 @@ class LeaveController {
     })
   }
 
-  async show({ response, params: { id } }) {
+  async show({ response, params }) {
+    const {id} = params
     const leave = await Leave.findOrFail(id)
 
     response.status(200).json({
@@ -39,23 +78,22 @@ class LeaveController {
   }
 
   async update({ request, response, params: { id } }) {
-    const { name, leave_type, from, to, no_of_days, tag, status } = request.post()
-    const leave = await Leave.findOrFail(id)
+    const { status } = request.all()
 
-    leave.name = name
-    leave.leave_type = leave_type
-    leave.from = from
-    leave.to = to
-    leave.no_of_days = no_of_days
-    leave.tag = tag
-    leave.status = status
+    try {
+      const leave = await Leave.findOrFail(id)
 
-    leave.save(id)
+      leave.status = status
 
-    response.status(200).json({
-      message: 'Successfully updated.',
-      data: leave
-    })
+      leave.save(leave)
+
+      response.status(200).json({
+        message: 'Successfully updated.',
+        data: leave
+      })
+    } catch (error) {
+      response.send(error)
+    }
   }
 
   async destroy ({ response, params: { id } }) {

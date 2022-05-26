@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
+const jwt = use('jsonwebtoken')
 
 class UserController {
   async index ({ response }) {
@@ -12,13 +13,18 @@ class UserController {
     })
   }
 
-  async show({ response, params: { id } }) {
-    const user = await User.findOrFail(id)
+  async show({ params, response }) {
+    try {
+      const {id} = params
+      const leave = await User.findOrFail(id)
 
-    response.status(200).json({
-      message: 'User ID : ' + id,
-      data: user
-    })
+      response.status(200).json({
+        message: 'Leave ID : ' + id,
+        leave
+      })
+    }catch (error) {
+      response.send(error.message)
+    }
   }
 
   async update({ request, response, params: { id } }) {
@@ -40,7 +46,7 @@ class UserController {
     user.country = country
     user.pin_code = pin_code
 
-    await user.save()
+    user.save()
 
     response.status(200).json({
       message: 'Successfully updated.',
@@ -51,7 +57,7 @@ class UserController {
   async destroy ({ response, params: { id } }) {
     const user = await User.findOrFail(id)
 
-    await user.delete()
+    user.delete()
 
     response.status(200).json({
       message: 'Successfully deleted.',

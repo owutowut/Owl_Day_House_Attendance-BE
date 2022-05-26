@@ -4,10 +4,20 @@ const Holiday = use('App/Models/Holiday')
 
 class HolidayController {
   async index ({ request, response }) {
-    const {page} = request.all()
+    const {page, search} = request.all()
 
     try {
+      if ( search ) {
+        const holiday = await Holiday.query()
+          .where('name', 'LIKE', `%${search}%`)
+          .paginate(page, 5)
+        return response.status(200).json({
+          message: 'All Holiday.',
+          data: holiday
+        })
+      }
       const holiday = await Holiday.query().paginate(page, 5)
+
 
       response.status(200).json({
         message: 'All Holiday.',

@@ -38,10 +38,6 @@ class User extends Model {
   leaves () {
     return this.hasMany('App/Models/Leave')
   }
-
-  work_from_homes () {
-    return this.hasMany('App/Models/work_from_home')
-  }
 }
 
 module.exports = User
