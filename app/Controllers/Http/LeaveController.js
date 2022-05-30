@@ -55,7 +55,7 @@ class LeaveController {
   }
 
   async store ({ request, response }) {
-    const data = request.all()
+    const data = request.body
 
     try {
       const leave = await Leave.create(data)
@@ -106,6 +106,7 @@ class LeaveController {
 
   async destroy ({ response, request }) {
     const { id } = request.params
+
     const leave = await Leave.findOrFail(id)
 
     try {

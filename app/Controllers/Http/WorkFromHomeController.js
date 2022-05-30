@@ -7,7 +7,7 @@ class WorkFromHomeController {
     const { page, search, selected } = request.all
 
     try {
-      if ( search !== '' ) {
+      if ( search ) {
         const work_from_home = await WorkFromHome.query()
           .where('name', 'LIKE', `%${search}%`)
           .paginate(page, 5)
@@ -17,7 +17,7 @@ class WorkFromHomeController {
           data: work_from_home
         })
       }
-      if ( selected !== '' ) {
+      if ( selected ) {
         const work_from_home = await WorkFromHome.query()
           .where('created_at', 'LIKE', `%${selected}%`)
           .paginate(page, 5)

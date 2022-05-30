@@ -4,32 +4,36 @@ const Holiday = use('App/Models/Holiday')
 
 class HolidayController {
   async index ({ request, response }) {
-    const { page, search, selected } = request.params
+    const { page, search, selected } = request.all
 
-    if (search) {
-      const holidays = await Holiday.query().where('name', 'LIKE', `%${search}%`).paginate(page, 5)
+    try {
+      if (search) {
+        const holidays = await Holiday.query().where('name', 'LIKE', `%${search}%`).paginate(page, 5)
 
-      return response.status(200).json({
-        message: 'Holiday by search.',
-        data: holidays
+        response.status(200).json({
+          message: 'Holiday by search.',
+          data: holidays , selected, page
+        })
+      }
+
+      if (selected) {
+        const holidays = await Holiday.query().where('created_at', 'LIKE', `%${selected}%`).paginate(page, 5)
+
+        response.status(200).json({
+          message: 'Holiday by selected.',
+          data: holidays , selected, page
+        })
+      }
+
+      const holidays = await Holiday.query().paginate(page, 5)
+
+      response.status(200).json({
+        message: 'All Holiday.',
+        data: holidays , selected, page
       })
+    } catch (error) {
+      response.send(error.message)
     }
-
-    if (selected) {
-      const holidays = await Holiday.query().where('created_at', 'LIKE', `%${selected}%`).paginate(page, 5)
-
-      return response.status(200).json({
-        message: 'Holiday by selected.',
-        data: holidays
-      })
-    }
-
-    const holidays = await Holiday.query().paginate(page, 5)
-
-    response.status(200).json({
-      message: 'All Holiday.',
-      data: holidays
-    })
   }
 
   async store ({ request, response }) {
@@ -48,13 +52,13 @@ class HolidayController {
   }
 
   async show({ request, response }) {
-    const data = request.all
+    const { id } = request.params
 
     try {
-      const holidays = await Holiday.findOrFail(data.id)
+      const holidays = await Holiday.findOrFail(id)
 
       response.status(200).json({
-        message: 'Holiday ID : ' + data.id,
+        message: 'Holiday ID : ' + id,
         holidays
       })
     } catch (error) {
@@ -63,7 +67,7 @@ class HolidayController {
   }
 
   async update({ request, response }) {
-    const data = request.all
+    const data = request.body
 
     try {
       const holidays = await Holiday.findOrFail(data.id)

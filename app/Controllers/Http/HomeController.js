@@ -1,0 +1,32 @@
+'use strict'
+
+const User = use('App/Models/User')
+
+class HomeController {
+  async index ({ response }) {
+    //get all employee
+    const all_employee = await User.query().count()
+    const all_employee_total = all_employee[0]['count(*)']
+    //get tag employee
+    const tag_employee = await User.query().where('tag', 'พนักงาน').count()
+    const tag_employee_total = tag_employee[0]['count(*)']
+    //get tag internship
+    const tag_internship = await User.query().where('tag', 'ฝึกงาน').count()
+    const tag_internship_total = tag_internship[0]['count(*)']
+    //get tag employee
+    const tag_probation = await User.query().where('tag', 'ทดลองงาน').count()
+    const tag_probation_total = tag_probation[0]['count(*)']
+    //get employee gender
+    const gender_male = await User.query().where('gender', 'ชาย').count()
+    const gender_male_total = gender_male[0]['count(*)']
+    const gender_female = await User.query().where('gender', 'หญิง').count()
+    const gender_female_total = gender_female[0]['count(*)']
+
+    response.status(200).json({
+      message: 'All Data Home.',
+      all_employee_total, tag_employee_total, tag_internship_total, tag_probation_total, gender_male_total, gender_female_total
+    })
+  }
+}
+
+module.exports = HomeController
