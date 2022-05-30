@@ -21,6 +21,10 @@ class User extends Model {
   leaves () {
     return this.hasMany('App/Models/Leave')
   }
+
+  work_from_homes () {
+    return this.hasMany('App/Models/WorkFromHome')
+  }
 }
 
 module.exports = User
