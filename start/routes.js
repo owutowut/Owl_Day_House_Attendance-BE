@@ -15,45 +15,58 @@
 
 /** @type {typeof import('@adonisjs/framework/src/Route/Manager')} */
 const Route = use('Route')
+//Home
+Route.get('home', 'HomeController.index')
 
 //Leaves
 Route.group(() => {
-  Route.get('/leaves', 'LeaveController.index')
-  Route.get('/leaves/:id', 'LeaveController.show').middleware(['findLeave'])
-  Route.post('/leaves/create', 'LeaveController.store')
-  Route.patch('/leaves/update/:id', 'LeaveController.update').middleware(['findLeave'])
-  Route.delete('/leaves/delete/:id', 'LeaveController.destroy').middleware(['findLeave'])
-})
+  Route.get('/', 'LeaveController.index')
+  Route.post('/create', 'LeaveController.store')
+}).prefix('leaves')
+Route.group(() => {
+  Route.get(':id', 'LeaveController.show')
+  Route.patch('update/:id', 'LeaveController.update')
+  Route.delete('delete/:id', 'LeaveController.destroy')
+}).prefix('leaves').middleware(['findLeave'])
+
 
 //WorkFromHome
 Route.group(() => {
-  Route.get('/work_from_home', 'WorkFromHomeController.index')
-  Route.get('/work_from_home/:id', 'WorkFromHomeController.show').middleware(['findWorkFromHome'])
-  Route.post('/work_from_home/create', 'WorkFromHomeController.store')
-  Route.patch('/work_from_home/update/:id', 'WorkFromHomeController.update').middleware(['findWorkFromHome'])
-  Route.delete('/work_from_home/delete/:id', 'WorkFromHomeController.destroy').middleware(['findWorkFromHome'])
-})
+  Route.get('/', 'WorkFromHomeController.index')
+  Route.post('create', 'WorkFromHomeController.store')
+}).prefix('work_from_home')
+Route.group(() => {
+  Route.get(':id', 'WorkFromHomeController.show')
+  Route.patch('update/:id', 'WorkFromHomeController.update')
+  Route.delete('delete/:id', 'WorkFromHomeController.destroy')
+}).prefix('work_from_home').middleware(['findWorkFromHome'])
 
 //Holiday
 Route.group(() => {
-  Route.get('/holiday', 'HolidayController.index')
-  Route.get('/holiday/:id', 'HolidayController.show').middleware(['findHoliday'])
-  Route.post('/holiday/create', 'HolidayController.store')
-  Route.patch('/holiday/update/:id', 'HolidayController.update').middleware(['findHoliday'])
-  Route.delete('/holiday/delete/:id', 'HolidayController.destroy').middleware(['findHoliday'])
-})
+  Route.get('/', 'HolidayController.index')
+  Route.post('create', 'HolidayController.store')
+}).prefix('holiday')
+Route.group(() => {
+  Route.get(':id', 'HolidayController.show')
+  Route.patch('update/:id', 'HolidayController.update')
+  Route.delete('delete/:id', 'HolidayController.destroy')
+}).prefix('holiday').middleware(['findHoliday'])
+
 
 //Users
 Route.group(() => {
-  Route.get('/users', 'UserController.index')
-  Route.get('/users/:id', 'UserController.show').middleware(['findUser'])
-  Route.patch('/users/update/:id', 'UserController.update').middleware(['findUser'])
-  Route.delete('/users/delete/:id', 'UserController.destroy').middleware(['findUser'])
-})
+  Route.get('/', 'UserController.index')
+  Route.get('/me', 'UserController.profile')
+}).prefix('users')
+Route.group(() => {
+  Route.get(':id', 'UserController.show')
+  Route.patch('update/:id', 'UserController.update')
+  Route.delete('delete/:id', 'UserController.destroy')
+}).prefix('users').middleware(['findUser'])
+
 
 //LogIn LogOut and Register
 Route.group(() => {
   Route.post('/login', 'LoginController.store')
-  Route.get('/logout', 'LoginController.destroy')
   Route.post('/register', 'RegisterController.store')
 }).middleware(['guest'])

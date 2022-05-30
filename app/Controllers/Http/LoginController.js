@@ -2,31 +2,40 @@
 
 const User = use('App/Models/User')
 const jwt = use('jsonwebtoken')
-const bcrypt = use('bcrypt')
+const Hash = use('Hash')
 
 class LoginController {
   async store ({ request, response }) {
-    const { email, password } = request.all()
-    const user = await User.query().where('email', email).first()
-    try {
-      if (user == null) {
-        response.send({
-          message : 'Invalid email or password.',
-          email
-        })
-      } else {
-        if ( bcrypt.compareSync(password, user.password )) {
-          const token = jwt.sign({ id:user.id }, 'shhh')
-          response.send({ token, user })
-        } else {
-          response.send({
-            message : 'Invalid email or password.',
-            email
+
+    const { email, password } = request.body
+
+    const user = await User.query()
+      .where('email', email)
+      .first()
+
+    if (!user) {
+      response.send('Email not found.')
+    } else {
+
+      const verify = await Hash.verify(password, user.password)
+
+      try {
+        if (verify) {
+          const token = jwt.sign(
+            {user},
+            process.env.TOKEN_KEY,
+            {expiresIn: "2h"}
+          )
+          response.status(200).json({
+            message: 'Logged in successfully.',
+            token, user
           })
+        } else {
+          response.send('Invalid password.')
         }
+      } catch (error) {
+        console.log(error.message)
       }
-    } catch (error) {
-      response.send(error)
     }
   }
 }

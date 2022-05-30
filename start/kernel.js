@@ -14,7 +14,7 @@ const Server = use('Server')
 */
 const globalMiddleware = [
   'Adonis/Middleware/BodyParser',
-  'App/Middleware/ConvertEmptyStringsToNull'
+  'App/Middleware/ConvertEmptyStringsToNull',
 ]
 
 /*
@@ -40,7 +40,8 @@ const namedMiddleware = {
   findLeave: 'App/Middleware/FindLeave',
   findWorkFromHome: 'App/Middleware/FindWorkFromHome',
   findHoliday: 'App/Middleware/FindHoliday',
-  findUser: 'App/Middleware/FindUser'
+  findUser: 'App/Middleware/FindUser',
+  verifyUser: 'App/Middleware/VerifyUser'
 }
 
 /*

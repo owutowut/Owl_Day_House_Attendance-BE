@@ -1,18 +1,37 @@
 'use strict'
 
+const jwt = use('jsonwebtoken')
 const User = use('App/Models/User')
 
 class RegisterController {
   async store ({ request, response }) {
-    const { first_name , last_name , email , password , role , position , tag, phone, birthday, report_to, address, state, country, pin_code } = request.post()
+    const data = request.body
+    const {email} = request.body
 
-    const user = await User.create(
-      { first_name , last_name , email , password , role , position , tag, phone, birthday, report_to, address, state, country, pin_code })
+    const findUser = await User.query()
+      .where('email', email)
+      .first()
 
-    response.status(200).json({
-      message: 'Successfully registered.',
-      data:user
-    })
+    if (findUser) {
+        response.send('Your email is used.')
+    } else {
+
+      const user = await User.create(data)
+
+      try {
+        const token = jwt.sign(
+          {user},
+          process.env.TOKEN_KEY,
+          {expiresIn: "2h"}
+        )
+        response.status(200).json({
+          message: 'Registered successfully.',
+          token, user
+        })
+      } catch (error) {
+        response.send(error.message)
+      }
+    }
   }
 }
 

@@ -4,7 +4,7 @@ const Leave = use('App/Models/Leave')
 
 class LeaveController {
   async index ({ request, response }) {
-    const {page, search, selected} = request.all()
+    const { page, search, selected } = request.all
     //get current month
     const today = new Date();
     const current_month = today.getMonth()+1;
@@ -24,24 +24,22 @@ class LeaveController {
 
     try {
       if ( search ) {
-        const leaves = await Leave.query()
-          .where('name', 'LIKE', `%${search}%`)
-          .paginate(page, 5)
+        const leaves = await Leave.query().where('name', `%${search}%`).paginate(page, 5)
 
         return response.status(200).json({
           message: 'Leaves by search',
-          data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
+          leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
         })
       }
 
-      if ( selected !== 'all' ) {
+      if ( selected ) {
         const leaves = await  Leave.query()
           .where('leave_type', 'LIKE', `%${selected}%`)
           .paginate(page, 5)
 
         return response.status(200).json({
           message: 'Leaves by selected',
-          data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
+          leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
         })
       }
 
@@ -49,36 +47,46 @@ class LeaveController {
 
       response.status(200).json({
         message: 'Leaves All',
-        data:leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
+        leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
       })
     } catch (error) {
-      response.send(error)
+      response.send(error.message)
     }
   }
 
   async store ({ request, response }) {
     const data = request.all()
 
-    const leave = await Leave.create(data)
+    try {
+      const leave = await Leave.create(data)
 
-    response.status(200).json({
-      message: 'Successfully created.',
-      data:leave
-    })
+      response.status(200).json({
+        message: 'Successfully created.',
+        data:leave
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
-  async show({ response, params }) {
-    const {id} = params
-    const leave = await Leave.findOrFail(id)
+  async show({ response, request }) {
+    const { id } = request.params
 
-    response.status(200).json({
-      message: 'Leave ID : ' + id,
-      data: leave
-    })
+    try {
+      const leave = await Leave.findOrFail(id)
+
+      response.status(200).json({
+        message: 'Leave ID : ' + id,
+        leave
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
-  async update({ request, response, params: { id } }) {
-    const { status } = request.all()
+  async update({ request, response }) {
+    const { id } = request.params
+    const { status } = request.body
 
     try {
       const leave = await Leave.findOrFail(id)
@@ -89,22 +97,27 @@ class LeaveController {
 
       response.status(200).json({
         message: 'Successfully updated.',
-        data: leave
+        leave
       })
     } catch (error) {
-      response.send(error)
+      response.send(error.message)
     }
   }
 
-  async destroy ({ response, params: { id } }) {
+  async destroy ({ response, request }) {
+    const { id } = request.params
     const leave = await Leave.findOrFail(id)
 
-    leave.delete(leave)
+    try {
+      leave.delete(leave)
 
-    response.status(200).json({
-      message: 'Successfully deleted.',
-      data: leave
-    })
+      response.status(200).json({
+        message: 'Successfully deleted.',
+        leave
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 }
 

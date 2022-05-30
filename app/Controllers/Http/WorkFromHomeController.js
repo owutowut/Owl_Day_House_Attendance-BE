@@ -3,64 +3,113 @@
 const WorkFromHome = use('App/Models/WorkFromHome')
 
 class WorkFromHomeController {
-  async index ({ response }) {
-    const work_from_home= await WorkFromHome.all()
+  async index ({ request, response }) {
+    const { page, search, selected } = request.all
 
-    response.status(200).json({
-      message: 'All Work from home.',
-      data: work_from_home
-    })
+    try {
+      if ( search !== '' ) {
+        const work_from_home = await WorkFromHome.query()
+          .where('name', 'LIKE', `%${search}%`)
+          .paginate(page, 5)
+
+        return response.status(200).json({
+          message: 'Work from Home by search.',
+          data: work_from_home
+        })
+      }
+      if ( selected !== '' ) {
+        const work_from_home = await WorkFromHome.query()
+          .where('created_at', 'LIKE', `%${selected}%`)
+          .paginate(page, 5)
+
+        return response.status(200).json({
+          message: 'Work from Home by selected.',
+          data: work_from_home
+        })
+      }
+
+      const work_from_home = await WorkFromHome.query().paginate(page, 5)
+
+      response.status(200).json({
+        message: 'All Work from Home.',
+        data: work_from_home
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
   async store ({ request, response }) {
-    const { name, leave_type, from, to, no_of_days, tag, status } = request.post()
+    const data = request.body
 
-    const work_from_home = await WorkFromHome.create({ name, leave_type, from, to, no_of_days, tag, status })
+    try {
+      const work_from_home = await WorkFromHome.create(data)
 
-    response.status(200).json({
-      message: 'Successfully created.',
-      data:work_from_home
-    })
+      response.status(200).json({
+        message: 'Successfully created.',
+        data: work_from_home
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
-  async show({ response, params: { id } }) {
-    const work_from_home = await WorkFromHome.findOrFail(id)
+  async show({ response, request }) {
+    const { id } = request.params
 
-    response.status(200).json({
-      message: 'Work from home ID : ' + id,
-      data: work_from_home
-    })
+    try {
+      const work_from_home = await WorkFromHome.findOrFail(id)
+
+      response.status(200).json({
+        message: 'Work from home ID : ' + id,
+        data: work_from_home
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
-  async update({ request, response, params: { id } }) {
-    const work_from_home = await WorkFromHome.findOrFail(id)
-    const { name, leave_type, from, to, no_of_days, tag, status } = request.post()
+  async update({ request, response }) {
+    const { id } = request.params
+    const data = request.body
 
-    work_from_home.name = name
-    work_from_home.leave_type = leave_type
-    work_from_home.from = from
-    work_from_home.to = to
-    work_from_home.no_of_days = no_of_days
-    work_from_home.tag = tag
-    work_from_home.status = status
+    try {
+      const work_from_home = await WorkFromHome.findOrFail(id)
 
-    await work_from_home.save()
+      work_from_home.name = data.name
+      work_from_home.leave_type = data.leave_type
+      work_from_home.from = data.from
+      work_from_home.to = data.to
+      work_from_home.no_of_days = data.no_of_days
+      work_from_home.tag = data.tag
+      work_from_home.status = data.status
 
-    response.status(200).json({
-      message: 'Successfully updated.',
-      data: work_from_home
-    })
+      work_from_home.save(work_from_home)
+
+      response.status(200).json({
+        message: 'Successfully updated.',
+        data: work_from_home
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 
-  async destroy ({ response, params: { id } }) {
-    const work_from_home = await WorkFromHome.findOrFail(id)
+  async destroy ({ response, request }) {
+    const { id } = request.params
 
-    await work_from_home.delete()
+    try {
+      const work_from_home = await WorkFromHome.findOrFail(id)
 
-    response.status(200).json({
-      message: 'Successfully deleted.',
-      data: work_from_home
-    })
+      work_from_home.delete(work_from_home)
+
+      response.status(200).json({
+        message: 'Successfully deleted.',
+        data: work_from_home
+      })
+    } catch (error) {
+      response.send(error.message)
+    }
   }
 }
 
