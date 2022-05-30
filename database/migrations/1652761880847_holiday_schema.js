@@ -8,7 +8,6 @@ class HolidaySchema extends Schema {
     this.create('holidays', (table) => {
       table.increments()
       table.timestamps()
-      table.integer('user_id').unsigned().references('id').inTable('users').onDelete('CASCADE')
       table.string('name').notNullable()
       table.string('from').notNullable()
       table.string('to').notNullable()
