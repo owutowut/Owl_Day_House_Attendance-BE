@@ -17,7 +17,7 @@ class WorkFromHomeSchema extends Schema {
       table.string('detail').notNullable()
       table.string('punchIn').notNullable()
       table.string('punchOut').notNullable()
-      table.string('status').notNullable().default('pending')
+      table.string('status').notNullable().default('Pending')
       table.string('tag').notNullable()
     })
   }

@@ -4,7 +4,7 @@ const Holiday = use('App/Models/Holiday')
 
 class HolidayController {
   async index ({ request, response }) {
-    const { page, search, selected } = request.all
+    const { page, search, selected } = request.body
 
     try {
       if (search) {
@@ -12,7 +12,7 @@ class HolidayController {
 
         response.status(200).json({
           message: 'Holiday by search.',
-          data: holidays , selected, page
+          data: holidays
         })
       }
 
@@ -21,7 +21,7 @@ class HolidayController {
 
         response.status(200).json({
           message: 'Holiday by selected.',
-          data: holidays , selected, page
+          data: holidays
         })
       }
 
@@ -29,9 +29,11 @@ class HolidayController {
 
       response.status(200).json({
         message: 'All Holiday.',
-        data: holidays , selected, page
+        data: holidays
       })
-    } catch (error) {
+    }
+
+    catch (error) {
       response.send(error.message)
     }
   }
@@ -44,7 +46,7 @@ class HolidayController {
 
       response.status(200).json({
         message: 'Successfully created.',
-        holidays
+        data: holidays
       })
     } catch (error) {
       response.send(error.message)
@@ -59,7 +61,7 @@ class HolidayController {
 
       response.status(200).json({
         message: 'Holiday ID : ' + id,
-        holidays
+        data: holidays
       })
     } catch (error) {
       response.send(error.message)
@@ -81,7 +83,7 @@ class HolidayController {
 
       response.status(200).json({
         message: 'Successfully updated.',
-        holidays
+        data: holidays
       })
     } catch (error) {
       response.send(error.message)
@@ -97,7 +99,7 @@ class HolidayController {
 
       response.status(200).json({
         message: 'Successfully deleted.',
-        holidays
+        data: holidays
       })
     } catch (error) {
       response.send(error.message)

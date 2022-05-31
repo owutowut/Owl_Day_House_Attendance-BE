@@ -12,7 +12,7 @@ class LeaveSchema extends Schema {
       table.string('name').notNullable()
       table.string('leave_type').notNullable()
       table.string('tag').notNullable()
-      table.string('status').notNullable().default('pending')
+      table.string('status').notNullable().default('Pending')
       table.string('from').notNullable()
       table.string('to').notNullable()
       table.integer('no_of_days').notNullable()

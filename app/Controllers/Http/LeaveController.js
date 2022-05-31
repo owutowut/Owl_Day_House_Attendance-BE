@@ -4,7 +4,7 @@ const Leave = use('App/Models/Leave')
 
 class LeaveController {
   async index ({ request, response }) {
-    const { page, search, selected } = request.all
+    const { page, search, selected } = request.body
     //get current month
     const today = new Date();
     const current_month = today.getMonth()+1;
@@ -24,7 +24,7 @@ class LeaveController {
 
     try {
       if ( search ) {
-        const leaves = await Leave.query().where('name', `%${search}%`).paginate(page, 5)
+        const leaves = await Leave.query().where('name', 'LIKE', `%${search}%`).paginate(page, 5)
 
         return response.status(200).json({
           message: 'Leaves by search',
@@ -33,9 +33,7 @@ class LeaveController {
       }
 
       if ( selected ) {
-        const leaves = await  Leave.query()
-          .where('leave_type', 'LIKE', `%${selected}%`)
-          .paginate(page, 5)
+        const leaves = await  Leave.query().where('leave_type', 'LIKE', `%${selected}%`).paginate(page, 5)
 
         return response.status(200).json({
           message: 'Leaves by selected',
@@ -86,12 +84,12 @@ class LeaveController {
 
   async update({ request, response }) {
     const { id } = request.params
-    const { status } = request.body
+    const data = request.body
 
     try {
       const leave = await Leave.findOrFail(id)
 
-      leave.status = status
+      leave.status = data.status
 
       leave.save(leave)
 
