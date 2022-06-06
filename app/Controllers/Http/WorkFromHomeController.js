@@ -4,7 +4,7 @@ const WorkFromHome = use('App/Models/WorkFromHome')
 
 class WorkFromHomeController {
   async index ({ request, response }) {
-    const { page, search, selected } = request.all
+    const { page, search, selected } =  request.body
 
     try {
       if ( search ) {
@@ -13,8 +13,8 @@ class WorkFromHomeController {
           .paginate(page, 5)
 
         return response.status(200).json({
-          message: 'Work from Home by search.',
-          data: work_from_home
+          message: 'Work from Home by search: '+search,
+          work_from_home
         })
       }
       if ( selected ) {
@@ -23,16 +23,16 @@ class WorkFromHomeController {
           .paginate(page, 5)
 
         return response.status(200).json({
-          message: 'Work from Home by selected.',
-          data: work_from_home
+          message: 'Work from Home selected: '+selected,
+          work_from_home
         })
       }
 
       const work_from_home = await WorkFromHome.query().paginate(page, 5)
 
       response.status(200).json({
-        message: 'All Work from Home.',
-        data: work_from_home
+        message: 'Work from Home Page: '+page,
+        work_from_home
       })
     } catch (error) {
       response.send(error.message)

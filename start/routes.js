@@ -18,9 +18,12 @@ const Route = use('Route')
 //Home
 Route.get('home', 'HomeController.index')
 
+//Employees
+Route.post('employees', 'EmployeeController.index')
+
 //Leaves
 Route.group(() => {
-  Route.get('/', 'LeaveController.index')
+  Route.post('/', 'LeaveController.index')
   Route.post('/create', 'LeaveController.store')
 }).prefix('leaves')
 Route.group(() => {
@@ -32,7 +35,7 @@ Route.group(() => {
 
 //WorkFromHome
 Route.group(() => {
-  Route.get('/', 'WorkFromHomeController.index')
+  Route.post('/', 'WorkFromHomeController.index')
   Route.post('create', 'WorkFromHomeController.store')
 }).prefix('work_from_home')
 Route.group(() => {
@@ -43,7 +46,7 @@ Route.group(() => {
 
 //Holiday
 Route.group(() => {
-  Route.get('/', 'HolidayController.index')
+  Route.post('/', 'HolidayController.index')
   Route.post('create', 'HolidayController.store')
 }).prefix('holiday')
 Route.group(() => {
@@ -56,7 +59,6 @@ Route.group(() => {
 //Users
 Route.group(() => {
   Route.get('/', 'UserController.index')
-  Route.get('/me', 'UserController.profile')
 }).prefix('users')
 Route.group(() => {
   Route.get(':id', 'UserController.show')
@@ -64,9 +66,9 @@ Route.group(() => {
   Route.delete('delete/:id', 'UserController.destroy')
 }).prefix('users').middleware(['findUser'])
 
-
 //LogIn LogOut and Register
 Route.group(() => {
   Route.post('/login', 'LoginController.store')
   Route.post('/register', 'RegisterController.store')
+  Route.get('/me', 'UserController.getProfile')
 }).middleware(['guest'])
