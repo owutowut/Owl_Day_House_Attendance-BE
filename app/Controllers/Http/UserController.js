@@ -5,12 +5,12 @@ const Helpers = use('Helpers')
 
 class UserController {
   async index ({ request, response }) {
-    const {search, position, status} = request.body
+    const {search, position, tag} = request.body
 
     try {
       if ( search ) {
         const user = await User.query()
-          .where('name', 'LIKE', `%${search}%`)
+          .where('first_name', 'LIKE', `%${search}%`)
           .fetch()
 
         return response.status(200).json({
@@ -20,7 +20,7 @@ class UserController {
       }
       if ( position ) {
         const user = await User.query()
-          .where('tag', 'LIKE', `%${position}%`)
+          .where('position', 'LIKE', `%${position}%`)
           .fetch()
 
         return response.status(200).json({
@@ -28,9 +28,9 @@ class UserController {
           user
         })
       }
-      if ( status ) {
+      if ( tag ) {
         const user = await User.query()
-          .where('status', 'LIKE', `%${status}%`)
+          .where('tag', 'LIKE', `%${tag}%`)
           .fetch()
 
         return response.status(200).json({
