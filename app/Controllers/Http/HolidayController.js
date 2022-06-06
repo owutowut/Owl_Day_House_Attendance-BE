@@ -7,20 +7,23 @@ class HolidayController {
     const { page, search, selected } = request.body
 
     try {
-      if (search) {
-        const holidays = await Holiday.query().where('name', 'LIKE', `%${search}%`).paginate(page, 5)
+      if ( search ) {
+        const holidays = await Holiday.query()
+          .where('name', 'LIKE', `%${search}%`)
+          .paginate(page, 5)
 
-        response.status(200).json({
-          message: 'Holiday by search.',
+        return response.status(200).json({
+          message: 'Holiday by search: '+search,
           data: holidays
         })
       }
+      if ( selected ) {
+        const holidays = await Holiday.query()
+          .where('created_at', 'LIKE', `%${selected}%`)
+          .paginate(page, 5)
 
-      if (selected) {
-        const holidays = await Holiday.query().where('created_at', 'LIKE', `%${selected}%`).paginate(page, 5)
-
-        response.status(200).json({
-          message: 'Holiday by selected.',
+        return response.status(200).json({
+          message: 'Holiday by selected: '+selected,
           data: holidays
         })
       }
@@ -28,7 +31,7 @@ class HolidayController {
       const holidays = await Holiday.query().paginate(page, 5)
 
       response.status(200).json({
-        message: 'All Holiday.',
+        message: 'Holiday Page: '+page,
         data: holidays
       })
     }

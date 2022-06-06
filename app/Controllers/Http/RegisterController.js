@@ -1,36 +1,47 @@
 'use strict'
 
-const jwt = use('jsonwebtoken')
 const User = use('App/Models/User')
+const Helpers = use('Helpers')
 
 class RegisterController {
   async store ({ request, response }) {
     const data = request.body
-    const {email} = request.body
+    console.log(data)
+    const findUser = await User.query().where('email', data.email).first()
+    const profile_img = request.file('profile_img', {
+      types: ['image'],
+      size: '2mb'
+    })
 
-    const findUser = await User.query()
-      .where('email', email)
-      .first()
+    try {
+      if (findUser) {
 
-    if (findUser) {
-        response.send('Your email is used.')
-    } else {
+        return response.send('Your email is used.')
+      } else {
+        const user = await User.create(data)
 
-      const user = await User.create(data)
+        if (profile_img) {
+          await profile_img.move(Helpers.publicPath('uploads'),
+              {
+                name: `${user.id}.jpg`,
+                overwrite: true
+              })
+          if (!profile_img.moved()) {
 
-      try {
-        const token = jwt.sign(
-          {user},
-          process.env.TOKEN_KEY,
-          {expiresIn: "2h"}
-        )
-        response.status(200).json({
+            return profile_img.error()
+          } else {
+            user.profile_img  = `https://${process.env.HOST}:${process.env.PORT}/uploads/${profile_img.fileName}`
+            return user.save(user)
+          }
+        }
+
+        return response.status(200).json({
           message: 'Registered successfully.',
-          token, user
+          user
         })
-      } catch (error) {
-        response.send(error.message)
       }
+    } catch (error) {
+      response.send(error.message)
     }
   }
 }

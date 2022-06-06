@@ -4,7 +4,7 @@ const Leave = use('App/Models/Leave')
 
 class LeaveController {
   async index ({ request, response }) {
-    const { page, search, selected } = request.body
+    const { page, search, selected } =  request.body
     //get current month
     const today = new Date();
     const current_month = today.getMonth()+1;
