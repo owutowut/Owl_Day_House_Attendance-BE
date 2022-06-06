@@ -18,9 +18,6 @@ const Route = use('Route')
 //Home
 Route.get('home', 'HomeController.index')
 
-//Employees
-Route.post('employees', 'EmployeeController.index')
-
 //Leaves
 Route.group(() => {
   Route.post('/', 'LeaveController.index')
@@ -31,7 +28,6 @@ Route.group(() => {
   Route.patch('update/:id', 'LeaveController.update')
   Route.delete('delete/:id', 'LeaveController.destroy')
 }).prefix('leaves').middleware(['findLeave'])
-
 
 //WorkFromHome
 Route.group(() => {
@@ -55,10 +51,9 @@ Route.group(() => {
   Route.delete('delete/:id', 'HolidayController.destroy')
 }).prefix('holiday').middleware(['findHoliday'])
 
-
 //Users
 Route.group(() => {
-  Route.get('/', 'UserController.index')
+  Route.post('/', 'UserController.index')
 }).prefix('users')
 Route.group(() => {
   Route.get(':id', 'UserController.show')
