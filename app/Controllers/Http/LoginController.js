@@ -1,6 +1,9 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Hash = use('Hash')
+const jwt = use('jsonwebtoken')
+
 
 class LoginController {
   async store ({ request, response, auth }) {
@@ -11,19 +14,22 @@ class LoginController {
       .first()
 
     if (!user) {
-      return response.send('Email not found.')
+      return response.send('Invalid Email or Password.')
     }
 
-    const token = await auth.attempt(email, password)
+    // const token = await auth.attempt(email, password)
+    const verify = await Hash.verify(password, user.password)
 
     try {
-      if (token) {
+      if (verify) {
+        const token = jwt.sign({ id: user.id }, process.env.TOKEN_KEY)
+
         response.status(200).json({
           message: 'Logged in successfully.',
           token, user
         })
       } else {
-        response.send('Invalid password.')
+        response.send('Invalid Email or Password.')
       }
     } catch (error) {
       console.log(error.message)

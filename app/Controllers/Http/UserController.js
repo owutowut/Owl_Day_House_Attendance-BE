@@ -2,6 +2,7 @@
 
 const User = use('App/Models/User')
 const Helpers = use('Helpers')
+const jwt = use('jsonwebtoken')
 
 class UserController {
   async index ({ request, response }) {
@@ -19,14 +20,27 @@ class UserController {
         })
       }
       if ( position ) {
-        const user = await User.query()
-          .where('position', 'LIKE', `%${position}%`)
-          .fetch()
+        if (!tag) {
+          const user = await User.query()
+            .where('position', 'LIKE', `%${position}%`)
+            .fetch()
 
-        return response.status(200).json({
-          message: 'User by position.',
-          user
-        })
+          return response.status(200).json({
+            message: 'User by position.',
+            user
+          })
+        }
+        if (tag) {
+          const user = await User.query()
+            .where('position', 'LIKE', `%${position}%`)
+            .where('tag', 'LIKE', `%${tag}%`)
+            .fetch()
+
+          return response.status(200).json({
+            message: 'User by position.',
+            user
+          })
+        }
       }
       if ( tag ) {
         const user = await User.query()
@@ -81,7 +95,7 @@ class UserController {
         if (!profile_img.moved()) {
           return profile_img.error()
         }
-        user.profile_img = `https://${process.env.HOST}:${process.env.PORT}/uploads/${profile_img.fileName}`
+        user.profile_img = `http://${process.env.HOST}:${process.env.PORT}/uploads/${profile_img.fileName}`
       }
 
       user.first_name = data.first_name
@@ -123,17 +137,22 @@ class UserController {
     })
   }
 
-  async getProfile ({ auth, request, response }) {
-    const token = request.header('Authorization')
+  async getProfile ({ request, response }) {
     try {
-      if (token) {
-        const user = await auth.getUser()
-        return response.send(user);
-      } else {
-        return response.send('Invalid Token!')
-      }
-    } catch (e) {
-      response.send('Invalid Token!')
+      const authorization = request.header('Authorization')
+      const token=authorization.split(' ')[1]
+      const data=jwt.verify(token,process.env.TOKEN_KEY)
+      const user =  await User.find(data.id)
+      response.send(user)
+      // const verify = await auth.check()
+      // if ( !verify ) {
+      //   return response.send('Invalid Token!')
+      // } else {
+      //   const user = await auth.getUser()
+      //   return response.send(user)
+      // }
+    } catch (error) {
+      response.send(error.message)
     }
   }
 }

@@ -5,19 +5,21 @@ const Leave = use('App/Models/Leave')
 class LeaveController {
   async index ({ request, response }) {
     const { page, search, selected } =  request.body
-    //get current month
-    const today = new Date();
-    const current_month = today.getMonth()+1;
-
     //get sick leaves total
     const sick_leaves = await Leave.query().where('leave_type', 'ลาป่วย').count()
     const sick_leaves_total = sick_leaves[0]['count(*)']
+
     //get business leaves total
     const business_leaves = await Leave.query().where('leave_type', 'ลากิจ').count()
     const business_leaves_total = business_leaves[0]['count(*)']
+
     //get all leaves total
     const all_leaves = await Leave.query().count()
     const all_leaves_total = all_leaves[0]['count(*)']
+
+    //get current month
+    const today = new Date();
+    const current_month = today.getMonth()+1;
     //get all leaves total of current month
     const all_leaves_month = await Leave.query().where('from', 'LIKE', `%${current_month}%`).count()
     const all_leaves_month_total = all_leaves_month[0]['count(*)']

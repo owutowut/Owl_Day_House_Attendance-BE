@@ -30,7 +30,7 @@ class RegisterController {
 
             return profile_img.error()
           } else {
-            user.profile_img  = `https://${process.env.HOST}:${process.env.PORT}/uploads/${profile_img.fileName}`
+            user.profile_img  = `http://${process.env.HOST}:${process.env.PORT}/uploads/${profile_img.fileName}`
             return user.save(user)
           }
         }

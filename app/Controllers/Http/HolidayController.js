@@ -18,9 +18,7 @@ class HolidayController {
         })
       }
       if ( selected ) {
-        const holidays = await Holiday.query()
-          .where('created_at', 'LIKE', `%${selected}%`)
-          .paginate(page, 5)
+        const holidays = await Holiday.query().where('created_at', 'LIKE', `%${selected}%`).paginate(page, 5)
 
         return response.status(200).json({
           message: 'Holiday by selected: '+selected,
