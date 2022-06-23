@@ -3,6 +3,7 @@
 const User = use('App/Models/User')
 const Helpers = use('Helpers')
 const jwt = use('jsonwebtoken')
+const Hash = use('Hash')
 
 class UserController {
   async index ({ request, response }) {
@@ -114,7 +115,7 @@ class UserController {
       user.pin_code = data.pin_code
       user.gender = data.gender
 
-      user.save(user)
+      user.save()
 
       response.status(200).json({
         message: 'Successfully updated.',
@@ -122,6 +123,26 @@ class UserController {
       })
     } catch (e) {
       response.send(e.message)
+    }
+  }
+
+  async changePassword ({ request, response }) {
+    const { id } = request.params
+    const { password, newPassword } = request.body
+    try {
+      const user = await User.findOrFail(id)
+      const verify = await Hash.verify(password, user.password)
+      if (!verify) {
+        return false
+      }
+      user.password = newPassword
+      user.save()
+
+      response.status(200).json({
+        message: 'Successfully updated.',
+      })
+    } catch (error) {
+      response.send(error.message)
     }
   }
 
@@ -144,13 +165,6 @@ class UserController {
       const data=jwt.verify(token,process.env.TOKEN_KEY)
       const user =  await User.find(data.id)
       response.send(user)
-      // const verify = await auth.check()
-      // if ( !verify ) {
-      //   return response.send('Invalid Token!')
-      // } else {
-      //   const user = await auth.getUser()
-      //   return response.send(user)
-      // }
     } catch (error) {
       response.send(error.message)
     }

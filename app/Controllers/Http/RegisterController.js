@@ -6,7 +6,6 @@ const Helpers = use('Helpers')
 class RegisterController {
   async store ({ request, response }) {
     const data = request.body
-    console.log(data)
     const findUser = await User.query().where('email', data.email).first()
     const profile_img = request.file('profile_img', {
       types: ['image'],

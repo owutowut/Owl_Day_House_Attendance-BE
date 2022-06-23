@@ -12,7 +12,7 @@ class UserSchema extends Schema {
       table.string('last_name').notNullable()
       table.string('email', 254).notNullable().unique()
       table.string('password', 254).notNullable()
-      table.string('role').default('admin')
+      table.string('role').default('user')
       table.string('position').notNullable()
       table.string('tag').notNullable()
       table.string('phone').notNullable()

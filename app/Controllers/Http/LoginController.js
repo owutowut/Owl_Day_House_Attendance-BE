@@ -4,9 +4,8 @@ const User = use('App/Models/User')
 const Hash = use('Hash')
 const jwt = use('jsonwebtoken')
 
-
 class LoginController {
-  async store ({ request, response, auth }) {
+  async store ({ request, response }) {
     const { email, password } = request.body
 
     const user = await User.query()
