@@ -43,6 +43,10 @@ Route.group(() => {
   Route.patch('update/:id', 'WorkFromHomeController.update')
   Route.delete('delete/:id', 'WorkFromHomeController.destroy')
 }).prefix('work_from_home').middleware(['findWorkFromHome'])
+//WorkFromHome[user]
+Route.group(() => {
+  Route.post('/user', 'UserWorkFromHomeController.index')
+}).prefix('work_from_home')
 
 //Holiday
 Route.group(() => {

@@ -76,13 +76,15 @@ class WorkFromHomeController {
     try {
       const work_from_home = await WorkFromHome.findOrFail(id)
 
-      work_from_home.name = data.name
-      work_from_home.leave_type = data.leave_type
+      work_from_home.user_id = data.user_id
+      work_from_home.reason = data.reason
+      work_from_home.detail = data.detail
       work_from_home.from = data.from
       work_from_home.to = data.to
       work_from_home.no_of_days = data.no_of_days
-      work_from_home.tag = data.tag
       work_from_home.status = data.status
+      work_from_home.punchIn = data.punchIn
+      work_from_home.punchOut = data.punchOut
 
       work_from_home.save(work_from_home)
 
