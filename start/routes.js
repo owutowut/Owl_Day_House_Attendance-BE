@@ -17,6 +17,8 @@
 const Route = use('Route')
 //Home
 Route.get('home', 'HomeController.index')
+//Home[user]
+Route.get('user/home', 'UserHomeController.index')
 
 //Leaves
 Route.group(() => {

@@ -1,6 +1,7 @@
 'use strict'
 
 const WorkFromHome = use('App/Models/WorkFromHome')
+const User = use('App/Models/User')
 
 class WorkFromHomeController {
   async index ({ request, response }) {
@@ -76,7 +77,6 @@ class WorkFromHomeController {
     try {
       const work_from_home = await WorkFromHome.findOrFail(id)
 
-      work_from_home.user_id = data.user_id
       work_from_home.reason = data.reason
       work_from_home.detail = data.detail
       work_from_home.from = data.from
