@@ -19,6 +19,9 @@ const Route = use('Route')
 Route.get('home', 'HomeController.index')
 //Home[user]
 Route.get('user/home', 'UserHomeController.index')
+//notifications
+Route.get('notifications/:id', 'NotificationController.index')
+Route.post('notifications/create', 'NotificationController.store')
 
 //Leaves
 Route.group(() => {

@@ -10,6 +10,8 @@ class NotificationSchema extends Schema {
       table.timestamps()
       table.string('leave_id')
       table.string('wfh_id')
+      table.string('user_id').notNullable()
+      table.string('notification')
     })
   }
 
