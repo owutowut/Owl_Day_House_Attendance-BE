@@ -1,6 +1,7 @@
 'use strict'
 
 const User = use('App/Models/User')
+const Holiday = use('App/Models/Holiday')
 
 class HomeController {
   async index ({ response }) {
@@ -26,9 +27,17 @@ class HomeController {
     const gender_female = await User.query().where('gender', 'Female').count()
     const gender_female_total = gender_female[0]['count(*)']
 
+    //get current month
+    const today = new Date();
+    const current_month = today.getMonth()+1;
+
+    const holidays = await Holiday.query().where('from', 'LIKE', `%${current_month}%`)
+      .orderBy('created_at', 'desc')
+      .fetch()
+
     response.status(200).json({
       message: 'All Data Home.',
-      all_employee_total, tag_employee_total, tag_internship_total, tag_probation_total, gender_male_total, gender_female_total
+      holidays, all_employee_total, tag_employee_total, tag_internship_total, tag_probation_total, gender_male_total, gender_female_total
     })
   }
 }

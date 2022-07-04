@@ -91,6 +91,10 @@ class LeaveController {
     try {
       const leave = await Leave.findOrFail(id)
 
+      leave.leave_type = data.leave_type
+      leave.from = data.from
+      leave.to = data.to
+      leave.no_of_days = data.no_of_days
       leave.status = data.status
 
       leave.save(leave)

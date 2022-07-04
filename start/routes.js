@@ -23,6 +23,12 @@ Route.get('user/home', 'UserHomeController.index')
 Route.get('notifications/:id', 'NotificationController.index')
 Route.post('notifications/create', 'NotificationController.store')
 
+//Task
+Route.group(() => {
+  Route.post('/', 'TaskController.index')
+  Route.post('/create', 'TaskController.store')
+}).prefix('tasks')
+
 //Leaves
 Route.group(() => {
   Route.post('/', 'LeaveController.index')
