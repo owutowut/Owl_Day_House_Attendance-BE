@@ -17,18 +17,30 @@
 const Route = use('Route')
 //Home
 Route.get('home', 'HomeController.index')
-//Home[user]
-Route.get('user/home', 'UserHomeController.index')
 //notifications
 Route.get('notifications/:id', 'NotificationController.index')
 Route.post('notifications/create', 'NotificationController.store')
-
+//attend
+Route.group(() => {
+  Route.post('/all', 'AttendanceController.index')
+  Route.post('/create', 'AttendanceController.store')
+  Route.get('/:id', 'AttendanceController.show')
+  Route.patch('/update/:id', 'AttendanceController.update')
+}).prefix('attendance')
 //Task
 Route.group(() => {
-  Route.post('/', 'TaskController.index')
+  Route.get('/all', 'TaskController.index')
+  Route.get('/:id', 'TaskController.show')
   Route.post('/create', 'TaskController.store')
-}).prefix('tasks')
-
+  Route.post('/addToTask', 'TaskController.addToTask')
+  Route.patch('/update/:id', 'TaskController.update')
+  Route.patch('/completed/:id', 'TaskController.taskCompleted')
+  Route.post('/yesterdayTasks/:id', 'TaskController.yesterdayTasks')
+  Route.post('/yesterdayWorkList/:id', 'TaskController.yesterdayWorkList')
+  Route.post('/today/pending/:id', 'TaskController.todayListPending')
+  Route.post('/today/completed/:id', 'TaskController.todayListCompleted')
+  Route.post('/completed/:id', 'TaskController.workListCompleted')
+}).prefix('task')
 //Leaves
 Route.group(() => {
   Route.post('/', 'LeaveController.index')
@@ -43,7 +55,6 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/user', 'UserLeaveController.index')
 }).prefix('leaves')
-
 //WorkFromHome
 Route.group(() => {
   Route.post('/', 'WorkFromHomeController.index')
@@ -58,7 +69,6 @@ Route.group(() => {
 Route.group(() => {
   Route.post('/user', 'UserWorkFromHomeController.index')
 }).prefix('work_from_home')
-
 //Holiday
 Route.group(() => {
   Route.post('/', 'HolidayController.index')
@@ -69,7 +79,8 @@ Route.group(() => {
   Route.patch('update/:id', 'HolidayController.update')
   Route.delete('delete/:id', 'HolidayController.destroy')
 }).prefix('holiday').middleware(['findHoliday'])
-
+//Holiday[user]
+Route.get('user/holiday', 'UserHolidayController.index')
 //[HR]
 Route.group(() => {
   Route.post('/', 'UserController.index')
@@ -82,7 +93,6 @@ Route.group(() => {
 }).prefix('users').middleware(['findUser'])
 Route.post('forgot_password','ForgotPasswordController.index')
 Route.patch('forgot_password/:token','ForgotPasswordController.update')
-
 //LogIn LogOut and Register
 Route.group(() => {
   Route.post('/login', 'LoginController.store')

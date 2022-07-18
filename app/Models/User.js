@@ -29,6 +29,14 @@ class User extends Model {
   notifications () {
     return this.hasMany('App/Models/Notification')
   }
+
+  tasks () {
+    return this.hasMany('App/Models/Task')
+  }
+
+  attendances () {
+    return this.hasMany('App/Models/Attendance')
+  }
 }
 
 module.exports = User

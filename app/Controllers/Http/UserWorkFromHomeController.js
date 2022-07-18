@@ -28,7 +28,10 @@ class UserWorkFromHomeController {
           work_from_home
         })
       }
-      const work_from_home = await WorkFromHome.query().where('user_id', 'LIKE', `%${id}%`).paginate(page, 5)
+      const work_from_home = await WorkFromHome.query()
+        .where('user_id', 'LIKE', `%${id}%`)
+        .orderBy('created_at', 'desc')
+        .paginate(page, 5)
 
       response.status(200).json({
         message: 'WorkFromHome User ID: '+id,

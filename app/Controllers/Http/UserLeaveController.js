@@ -30,6 +30,7 @@ class UserLeaveController {
         const leaves = await  Leave.query()
           .where('user_id', 'LIKE', `%${id}%`)
           .where('leave_type', 'LIKE', `%${selected}%`)
+          .orderBy('created_at', 'desc')
           .paginate(page, 5)
 
         return response.status(200).json({
@@ -37,7 +38,10 @@ class UserLeaveController {
           leaves, sick_leaves_total, business_leaves_total, all_leaves_total, all_leaves_month_total
         })
       }
-      const leaves = await Leave.query().where('user_id', 'LIKE', `%${id}%`).paginate(page, 5)
+      const leaves = await Leave.query()
+        .where('user_id', 'LIKE', `%${id}%`)
+        .orderBy('created_at', 'desc')
+        .paginate(page, 5)
 
       response.status(200).json({
         message: 'Leaves All User ID: '+id,

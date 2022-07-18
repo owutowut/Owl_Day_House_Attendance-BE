@@ -12,8 +12,10 @@ class LoginController {
       .where('email', email)
       .first()
 
+    const invalid = 'Invalid Email or Password.'
+
     if (!user) {
-      return response.send('Invalid Email or Password.')
+      return response.status(200).json({invalid})
     }
 
     // const token = await auth.attempt(email, password)
@@ -28,7 +30,7 @@ class LoginController {
           token, user
         })
       } else {
-        response.send('Invalid Email or Password.')
+        return response.status(200).json({invalid})
       }
     } catch (error) {
       console.log(error.message)
